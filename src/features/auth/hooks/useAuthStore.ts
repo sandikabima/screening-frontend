@@ -45,8 +45,6 @@ export const useAuthStore = create<AuthState>((set, get) => {
       const user = get().user;
       if (!user) return false;
 
-      if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") return true;
-
       if (!user.permissions || !Array.isArray(user.permissions)) return false;
 
       return user.permissions.some(
