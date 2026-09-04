@@ -53,6 +53,6 @@ jobs:
             if [ $? -eq 0 ]; then
               pm2 reload screening-frontend
             else
-              pm2 serve /var/www/screening-frontend 3002 --name "screening-frontend" --spa
+              pm2 serve /var/www/screening-frontend 3003 --name "screening-frontend" --spa
             fi
             pm2 save
