@@ -77,7 +77,7 @@ export const PermissionManager: React.FC<PermissionManagerProps> = ({
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_8px_#dc2626]" />
           <h2 className="text-xs font-black text-white uppercase tracking-wider">
-            KATALOG MASTER PERMISSION
+            KATALOG MASTER PERMISSIONN
           </h2>
         </div>
 
