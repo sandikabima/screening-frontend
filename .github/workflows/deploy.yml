@@ -36,7 +36,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.VPS_IP }}
           REMOTE_USER: ${{ secrets.VPS_USER }}
           TARGET: "/var/www/screening-frontend"
-          REMOTE_PORT: ${{ secrets.VPS_PORT }}
+          PORT: ${{ secrets.VPS_PORT }}
 
       - name: Serve via PM2 on VPS
         uses: appleboy/ssh-action@v1.0.3
