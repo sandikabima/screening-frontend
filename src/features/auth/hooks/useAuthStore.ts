@@ -45,8 +45,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
       const user = get().user;
       if (!user) return false;
 
-      if (user.roleName === "SUPER_ADMIN" || user.roleName === "ADMIN")
-        return true;
+      if (user.role === "SUPER_ADMIN" || user.role === "ADMIN") return true;
 
       if (!user.permissions || !Array.isArray(user.permissions)) return false;
 
@@ -55,10 +54,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
       );
     },
 
-    hasRole: (roleName: string) => {
+    hasRole: (role: string) => {
       const user = get().user;
       if (!user) return false;
-      return user.roleName?.toUpperCase() === roleName.toUpperCase();
+      return user.role?.toUpperCase() === role.toUpperCase();
     },
   };
 });
