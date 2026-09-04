@@ -1,0 +1,58 @@
+name: Deploy Management Screening
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+        run: npm run build
+
+      - name: Sync Build Folder to VPS
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_KEY }}
+          ARGS: "-rtzv --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.VPS_IP }}
+          REMOTE_USER: ${{ secrets.VPS_USER }}
+          TARGET: "/var/www/student-portal"
+          REMOTE_PORT: ${{ secrets.VPS_PORT }}
+          EXCLUDE: "/node_modules/"
+
+      - name: Serve via PM2 on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            pm2 describe screening-frontend > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+              pm2 reload screening-frontend
+            else
+              pm2 serve /var/www/screening-frontend 3002 --name "screening-frontend" --spa
+            fi
+            pm2 save
