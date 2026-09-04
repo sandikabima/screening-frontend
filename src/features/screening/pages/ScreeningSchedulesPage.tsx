@@ -90,7 +90,7 @@ export const ScreeningSchedulesPage: React.FC = () => {
             MANAJEMEN BATCH & JADWAL SCREENING
           </h1>
           <p className="mt-1 text-xs text-zinc-500">
-            Konsol Pembentukan Jadwal Batch, Generator Barcode/QR Code &
+            Konsol Pembentukan Jadwal Batch, Generator Barcode / QR Code &
             Otoritas Sesi Tes
           </p>
         </div>
