@@ -241,7 +241,7 @@ export const App: React.FC = () => {
                 </Route>
                 <Route
                   element={
-                    <ProtectedRoute requiredPermission="MENU_SCREENING_SESSION" />
+                    <ProtectedRoute requiredPermission="MENU_SRQ_RESPONSE" />
                   }
                 >
                   <Route
@@ -255,7 +255,7 @@ export const App: React.FC = () => {
                 </Route>
                 <Route
                   element={
-                    <ProtectedRoute requiredPermission="MENU_SCREENING_SESSION" />
+                    <ProtectedRoute requiredPermission="MENU_SCREENING_RESULT" />
                   }
                 >
                   <Route
@@ -269,7 +269,7 @@ export const App: React.FC = () => {
                 </Route>
                 <Route
                   element={
-                    <ProtectedRoute requiredPermission="MENU_SCREENING_SESSION" />
+                    <ProtectedRoute requiredPermission="MENU_FOLLOW_UP" />
                   }
                 >
                   <Route
