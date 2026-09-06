@@ -200,9 +200,7 @@ export const App: React.FC = () => {
                   />
                 </Route>
                 <Route
-                  element={
-                    <ProtectedRoute requiredPermission="MENU_QUESTION" />
-                  }
+                  element={<ProtectedRoute requiredPermission="MENU_CUTOFF" />}
                 >
                   <Route
                     path={ROUTES.ASSESMENT_CUT_OFF}
