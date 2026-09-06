@@ -20,7 +20,7 @@ export const LoginForm: React.FC = () => {
         label="Email Pengguna"
         type="email"
         required
-        placeholder="gmail@example.com"
+        placeholder="gmail@example.ac.id"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
