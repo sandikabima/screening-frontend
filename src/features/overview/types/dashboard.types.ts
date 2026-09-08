@@ -1,4 +1,12 @@
-export interface DashboardOverviewStats {
+export interface MasterDataMetrics {
+  totalRegisteredStudents: number;
+  totalFaculties: number;
+  totalStudyPrograms: number;
+  totalClasses: number;
+  totalCohorts: number;
+}
+
+export interface OverviewMetrics {
   totalScreening: number;
   criticalCasesP1: number;
   highRiskCasesP2: number;
@@ -6,37 +14,64 @@ export interface DashboardOverviewStats {
   normalCasesP4: number;
 }
 
-export interface DashboardFollowUpStats {
+export interface FacultyRiskDistributionItem {
+  code: string;
+  name: string;
+  p1: number;
+  p2: number;
+  p3: number;
+  p4: number;
+  total: number;
+}
+
+export interface SymptomClustersMetrics {
+  emotionalDistressF1: number;
+  somaticSymptomsF2: number;
+  depressiveThoughtsC1: number;
+  energyDecreaseS1: number;
+}
+
+export interface MainIssueM1Item {
+  label: string;
+  total: number;
+}
+
+export interface FollowUpMetrics {
   pending: number;
   scheduled: number;
   completed: number;
   totalTickets: number;
 }
 
-export interface EmergencyCaseStudent {
+export interface RecentEmergencyCaseItem {
   id: string;
-  nim: string;
-  user?: {
-    name: string;
-    email: string;
-  };
-  studyProgram?: {
-    name: string;
-    code: string;
-  };
-}
-
-export interface RecentEmergencyCase {
-  id: string;
+  sessionId?: string;
+  studentId?: string;
   srqScore: number;
   priorityResult: string;
-  reasonCode: string;
   calculatedAt: string;
-  student?: EmergencyCaseStudent;
+  student?: {
+    id: string;
+    nim: string;
+    gender?: string;
+    phoneNumber?: string;
+    user?: {
+      name: string;
+      email: string;
+    } | null;
+    studyProgram?: {
+      name: string;
+      code: string;
+    } | null;
+  } | null;
 }
 
 export interface DashboardStats {
-  overview: DashboardOverviewStats;
-  followUpStats: DashboardFollowUpStats;
-  recentEmergencyCases: RecentEmergencyCase[];
+  masterData: MasterDataMetrics;
+  overview: OverviewMetrics;
+  facultyDistribution: FacultyRiskDistributionItem[];
+  symptomClusters: SymptomClustersMetrics;
+  mainIssuesM1: MainIssueM1Item[];
+  followUpStats: FollowUpMetrics;
+  recentEmergencyCases: RecentEmergencyCaseItem[];
 }

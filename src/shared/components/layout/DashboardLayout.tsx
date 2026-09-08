@@ -58,11 +58,11 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
       <aside className="w-64 bg-black border-r border-zinc-900 flex flex-col justify-between h-screen sticky top-0 shrink-0">
         <div className="flex-1 overflow-y-auto">
           <div className="h-16 px-4 border-b border-zinc-900 flex items-center gap-3 shrink-0 bg-black">
-            <div className="h-9 w-9 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center justify-center p-1 shadow-[0_0_12px_rgba(220,38,38,0.2)] shrink-0 group">
+            <div className="h-9 w-9 bg-white border border-zinc-800 rounded-lg flex items-center justify-center p-1 shadow-xs shrink-0 group">
               <img
                 src="/logo.png"
                 alt="Logo Unbrah"
-                className="h-full w-full object-contain filter drop-shadow-[0_0_6px_rgba(220,38,38,0.4)] transition-transform duration-300 group-hover:scale-105"
+                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -72,9 +72,9 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
             <div className="flex-1 min-w-0">
               <div className="font-black text-[11px] tracking-wide uppercase text-white leading-none flex items-center gap-1.5 truncate">
                 <span className="truncate">UNIV. BAITURRAHMAH</span>
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_6px_rgba(239,68,68,0.8)] shrink-0" />
+                <span className="h-1.5 w-1.5 rounded-full bg-red-600 animate-pulse shadow-[0_0_6px_#dc2626] shrink-0" />
               </div>
-              <div className="text-[8.5px] text-red-500/90 tracking-wider font-bold uppercase mt-1 truncate">
+              <div className="text-[8.5px] text-red-500 tracking-wider font-bold uppercase mt-1 truncate">
                 UPT Layanan Psikologi & Difabel
               </div>
             </div>

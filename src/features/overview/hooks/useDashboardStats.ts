@@ -1,36 +1,42 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DashboardStats } from "../types/dashboard.types";
 import { useNotificationStore } from "@/shared/hooks/useNotificationStore";
-import { screeningCache } from "@/shared/lib/cacheEngine";
+import { campusCache } from "@/shared/lib/cacheEngine";
+import { DashboardStats } from "../types/dashboard.types";
 import { dashboardService } from "../api/dashboard.service";
 
-const MIN_TABLE_LOADING = 600;
+const MIN_DASHBOARD_LOADING = 400;
+const CACHE_KEY = "dashboard_overview_stats";
 
 export const useDashboardStats = (isTabActive: boolean = true) => {
   const { notify } = useNotificationStore();
-  const cacheKey = "dashboard_overview_stats";
-  const cached = screeningCache.get<DashboardStats>(cacheKey);
 
-  const [stats, setStats] = useState<DashboardStats | null>(cached || null);
+  const cached = campusCache.get<DashboardStats>(CACHE_KEY);
+
+  const [data, setData] = useState<DashboardStats | null>(cached || null);
   const [loading, setLoading] = useState<boolean>(!cached);
+
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchStats = useCallback(
+  const fetchDashboardStats = useCallback(
     async (force = false) => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
       abortControllerRef.current = new AbortController();
 
-      const currentCached = screeningCache.get<DashboardStats>(cacheKey);
-      if (currentCached && !force) {
-        setStats(currentCached);
-        setLoading(false);
-        return;
+      if (force) {
+        campusCache.invalidate(CACHE_KEY);
+      } else {
+        const currentCached = campusCache.get<DashboardStats>(CACHE_KEY);
+        if (currentCached) {
+          setData(currentCached);
+          setLoading(false);
+          return;
+        }
       }
 
       setLoading(true);
       try {
         const minDelayPromise = new Promise((resolve) =>
-          setTimeout(resolve, MIN_TABLE_LOADING),
+          setTimeout(resolve, MIN_DASHBOARD_LOADING),
         );
 
         const [response] = await Promise.all([
@@ -38,9 +44,13 @@ export const useDashboardStats = (isTabActive: boolean = true) => {
           minDelayPromise,
         ]);
 
-        if (response.data) {
-          setStats(response.data);
-          screeningCache.set(cacheKey, response.data);
+        // Tangani unwrapping data envelope dari response Axios
+        const rawPayload: any = response;
+        const statsData: DashboardStats = rawPayload?.data || rawPayload;
+
+        if (statsData) {
+          setData(statsData);
+          campusCache.set(CACHE_KEY, statsData);
         }
       } catch (err: any) {
         if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
@@ -55,17 +65,17 @@ export const useDashboardStats = (isTabActive: boolean = true) => {
 
   useEffect(() => {
     if (isTabActive) {
-      fetchStats();
+      fetchDashboardStats(true);
     }
     return () => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
     };
-  }, [isTabActive, fetchStats]);
+  }, [isTabActive, fetchDashboardStats]);
 
   return {
-    stats,
+    data,
     loading,
-    refetchStats: () => fetchStats(true),
+    refetchStats: () => fetchDashboardStats(true),
   };
 };
 
