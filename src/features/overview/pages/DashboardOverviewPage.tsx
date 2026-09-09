@@ -387,7 +387,7 @@ export const DashboardOverviewPage: React.FC = () => {
       </HasPermission>
 
       {/* 6. STATUS TIKET & EMERGENCY STREAM */}
-      <HasPermission permission="view_clinical_triage_stats">
+      <HasPermission permission="view_clinical_triage_stats_super_admin">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-black p-5 border border-zinc-900 rounded-xl space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 border-b border-zinc-900 pb-3 flex items-center justify-between">
