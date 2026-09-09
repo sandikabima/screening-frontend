@@ -22,7 +22,6 @@ export const DashboardOverviewPage: React.FC = () => {
 
   return (
     <div className="w-full space-y-6 font-mono text-zinc-200 select-none">
-      {/* 1. HEADER BANNER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-900 pb-5">
         <div>
           <h1 className="flex items-center gap-3 text-xl font-black uppercase tracking-wider text-white">
@@ -132,6 +131,7 @@ export const DashboardOverviewPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {/* TOTAL SCREENING */}
             <div className="bg-zinc-950 p-4 border border-zinc-900 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-zinc-500 text-xs font-bold">
                 <span>TOTAL SCREENING</span>
@@ -145,20 +145,29 @@ export const DashboardOverviewPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="bg-zinc-950 p-4 border border-red-900/60 rounded-xl space-y-2 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-red-600" />
-              <div className="flex items-center justify-between text-red-500 text-xs font-bold">
-                <span>P1 - EMERGENCY</span>
-                <ShieldAlert className="h-4 w-4 animate-bounce" />
+            {/* P1 - EMERGENCY (GLOWING WARNING / SUPER BRIGHT) */}
+            <div className="bg-red-950/40 p-4 border-2 border-red-500 rounded-xl space-y-2 relative overflow-hidden animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+              {/* Top Red Accent Line */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-red-500 shadow-[0_0_12px_#ef4444]" />
+
+              <div className="flex items-center justify-between text-red-400 text-xs font-bold">
+                <span className="flex items-center gap-1.5 text-red-300">
+                  <span className="h-2 w-2 rounded-full bg-red-500 animate-ping" />
+                  <span>P1 - EMERGENCY</span>
+                </span>
+                <ShieldAlert className="h-4 w-4 text-red-400 animate-bounce" />
               </div>
-              <div className="text-2xl font-black text-red-500">
+
+              <div className="text-2xl font-black text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.9)]">
                 {data?.overview?.criticalCasesP1 ?? 0}
               </div>
-              <p className="text-[10px] text-red-900/90 font-bold font-sans">
+
+              <p className="text-[10px] text-red-300 font-bold font-sans">
                 Suicidal Flag / Risiko Tinggi
               </p>
             </div>
 
+            {/* P2 - HIGH RISK */}
             <div className="bg-zinc-950 p-4 border border-amber-900/60 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-amber-500 text-xs font-bold">
                 <span>P2 - HIGH RISK</span>
@@ -168,23 +177,25 @@ export const DashboardOverviewPage: React.FC = () => {
                 {data?.overview?.highRiskCasesP2 ?? 0}
               </div>
               <p className="text-[10px] text-amber-900/90 font-bold font-sans">
-                Di atas Cut-Off (&gt;6)
+                Cluster Gejala Berat
               </p>
             </div>
 
-            <div className="bg-zinc-950 p-4 border border-yellow-900/60 rounded-xl space-y-2 relative overflow-hidden">
-              <div className="flex items-center justify-between text-yellow-500 text-xs font-bold">
+            {/* P3 - MONITORING (Disesuaikan ke aksen BIRU) */}
+            <div className="bg-zinc-950 p-4 border border-blue-900/60 rounded-xl space-y-2 relative overflow-hidden">
+              <div className="flex items-center justify-between text-blue-400 text-xs font-bold">
                 <span>P3 - MONITORING</span>
                 <Clock className="h-4 w-4" />
               </div>
-              <div className="text-2xl font-black text-yellow-400">
+              <div className="text-2xl font-black text-blue-400">
                 {data?.overview?.monitoringCasesP3 ?? 0}
               </div>
-              <p className="text-[10px] text-yellow-900/90 font-bold font-sans">
+              <p className="text-[10px] text-blue-900/90 font-bold font-sans">
                 Cluster Gejala Ringan
               </p>
             </div>
 
+            {/* P4 - PREVENTIF */}
             <div className="bg-zinc-950 p-4 border border-emerald-900/60 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-emerald-500 text-xs font-bold">
                 <span>P4 - PREVENTIF</span>
@@ -236,6 +247,10 @@ export const DashboardOverviewPage: React.FC = () => {
                       <span className="text-amber-400 font-bold">
                         {fac.p2} P2
                       </span>{" "}
+                      |{" "}
+                      <span className="text-blue-400 font-bold">
+                        {fac.p3} P3
+                      </span>{" "}
                       | <span className="text-zinc-400">{fac.total} Total</span>
                     </span>
                   </div>
@@ -251,9 +266,10 @@ export const DashboardOverviewPage: React.FC = () => {
                       className="bg-amber-500 h-full"
                       title={`P2: ${fac.p2}`}
                     />
+                    {/* P3 diubah ke bg-blue-500 agar sangat kontras dengan P2 amber */}
                     <div
                       style={{ width: `${p3Pct}%` }}
-                      className="bg-yellow-500 h-full"
+                      className="bg-blue-500 h-full"
                       title={`P3: ${fac.p3}`}
                     />
                     <div
@@ -267,6 +283,7 @@ export const DashboardOverviewPage: React.FC = () => {
             })}
           </div>
 
+          {/* Legend Warna */}
           <div className="flex items-center gap-4 text-[10px] pt-2 text-zinc-500 border-t border-zinc-900">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-red-600" /> P1 Emergency
@@ -276,7 +293,7 @@ export const DashboardOverviewPage: React.FC = () => {
               Risk
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" /> P3
+              <span className="h-2 w-2 rounded-full bg-blue-500" /> P3
               Monitoring
             </span>
             <span className="flex items-center gap-1">
