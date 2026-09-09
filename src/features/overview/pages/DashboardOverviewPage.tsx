@@ -22,6 +22,7 @@ export const DashboardOverviewPage: React.FC = () => {
 
   return (
     <div className="w-full space-y-6 font-mono text-zinc-200 select-none">
+      {/* 1. HEADER BANNER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-900 pb-5">
         <div>
           <h1 className="flex items-center gap-3 text-xl font-black uppercase tracking-wider text-white">
@@ -63,7 +64,7 @@ export const DashboardOverviewPage: React.FC = () => {
             <div className="text-xl font-black text-white">
               {data?.masterData?.totalRegisteredStudents?.toLocaleString() ?? 0}
             </div>
-            <p className="text-[9.5px] text-zinc-600">
+            <p className="text-[9.5px] text-zinc-600 font-sans">
               Total akun mahasiswa registered
             </p>
           </div>
@@ -76,7 +77,9 @@ export const DashboardOverviewPage: React.FC = () => {
             <div className="text-xl font-black text-white">
               {data?.masterData?.totalFaculties ?? 0}
             </div>
-            <p className="text-[9.5px] text-zinc-600">Fakultas aktif terdata</p>
+            <p className="text-[9.5px] text-zinc-600 font-sans">
+              Fakultas aktif terdata
+            </p>
           </div>
 
           <div className="bg-zinc-950/80 p-3.5 border border-zinc-900 rounded-xl space-y-1">
@@ -87,7 +90,7 @@ export const DashboardOverviewPage: React.FC = () => {
             <div className="text-xl font-black text-white">
               {data?.masterData?.totalStudyPrograms ?? 0}
             </div>
-            <p className="text-[9.5px] text-zinc-600">
+            <p className="text-[9.5px] text-zinc-600 font-sans">
               Prodi terdaftar di sistem
             </p>
           </div>
@@ -100,7 +103,7 @@ export const DashboardOverviewPage: React.FC = () => {
             <div className="text-xl font-black text-white">
               {data?.masterData?.totalClasses ?? 0}
             </div>
-            <p className="text-[9.5px] text-zinc-600">
+            <p className="text-[9.5px] text-zinc-600 font-sans">
               Total kelas aktif terdaftar
             </p>
           </div>
@@ -113,15 +116,18 @@ export const DashboardOverviewPage: React.FC = () => {
             <div className="text-xl font-black text-white">
               {data?.masterData?.totalCohorts ?? 0}
             </div>
-            <p className="text-[9.5px] text-zinc-600">Tahun angkatan peserta</p>
+            <p className="text-[9.5px] text-zinc-600 font-sans">
+              Tahun angkatan peserta
+            </p>
           </div>
         </div>
       </div>
 
+      {/* 3. RINGKASAN STATUS TRIAGE KLINIS */}
       <HasPermission permission="view_clinical_triage_stats">
         <div className="space-y-2 pt-2">
           <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-            <span>RINGKASAN STATUS TRIAGE & DIAGNOSTIK KLINIS</span>
+            <span>RINGKASAN STATUS TRIAGE &amp; DIAGNOSTIK KLINIS</span>
             <div className="h-px bg-zinc-900 flex-1" />
           </div>
 
@@ -134,7 +140,7 @@ export const DashboardOverviewPage: React.FC = () => {
               <div className="text-2xl font-black text-white">
                 {data?.overview?.totalScreening?.toLocaleString() ?? 0}
               </div>
-              <p className="text-[10px] text-zinc-600">
+              <p className="text-[10px] text-zinc-600 font-sans">
                 Sesi diagnostik selesai
               </p>
             </div>
@@ -148,7 +154,7 @@ export const DashboardOverviewPage: React.FC = () => {
               <div className="text-2xl font-black text-red-500">
                 {data?.overview?.criticalCasesP1 ?? 0}
               </div>
-              <p className="text-[10px] text-red-900/90 font-bold">
+              <p className="text-[10px] text-red-900/90 font-bold font-sans">
                 Suicidal Flag / Risiko Tinggi
               </p>
             </div>
@@ -161,7 +167,7 @@ export const DashboardOverviewPage: React.FC = () => {
               <div className="text-2xl font-black text-amber-500">
                 {data?.overview?.highRiskCasesP2 ?? 0}
               </div>
-              <p className="text-[10px] text-amber-900/90 font-bold">
+              <p className="text-[10px] text-amber-900/90 font-bold font-sans">
                 Di atas Cut-Off (&gt;6)
               </p>
             </div>
@@ -174,7 +180,7 @@ export const DashboardOverviewPage: React.FC = () => {
               <div className="text-2xl font-black text-yellow-400">
                 {data?.overview?.monitoringCasesP3 ?? 0}
               </div>
-              <p className="text-[10px] text-yellow-900/90 font-bold">
+              <p className="text-[10px] text-yellow-900/90 font-bold font-sans">
                 Cluster Gejala Ringan
               </p>
             </div>
@@ -187,7 +193,7 @@ export const DashboardOverviewPage: React.FC = () => {
               <div className="text-2xl font-black text-emerald-500">
                 {data?.overview?.normalCasesP4 ?? 0}
               </div>
-              <p className="text-[10px] text-emerald-900/90 font-bold">
+              <p className="text-[10px] text-emerald-900/90 font-bold font-sans">
                 Skor Normal / Non-Klinis
               </p>
             </div>
@@ -195,7 +201,7 @@ export const DashboardOverviewPage: React.FC = () => {
         </div>
       </HasPermission>
 
-      {/* 4. DISTRIBUSI RISIKO KLINIS PER FAKULTAS (DIPROTEKSI PERMISSION) */}
+      {/* 4. DISTRIBUSI RISIKO KLINIS PER FAKULTAS */}
       <HasPermission permission="view_clinical_triage_stats">
         <div className="bg-black p-5 border border-zinc-900 rounded-xl space-y-4">
           <div className="flex items-center justify-between border-b border-zinc-900 pb-3">
@@ -280,7 +286,7 @@ export const DashboardOverviewPage: React.FC = () => {
         </div>
       </HasPermission>
 
-      {/* 5. SEBARAN KELOMPOK GEJALA & PROFIL TAG M1 (DIPROTEKSI PERMISSION) */}
+      {/* 5. SEBARAN KELOMPOK GEJALA INTI & PROFIL TAG M1 */}
       <HasPermission permission="view_clinical_triage_stats">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-black p-5 border border-zinc-900 rounded-xl space-y-4">
@@ -380,6 +386,7 @@ export const DashboardOverviewPage: React.FC = () => {
         </div>
       </HasPermission>
 
+      {/* 6. STATUS TIKET & EMERGENCY STREAM */}
       <HasPermission permission="view_clinical_triage_stats">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-black p-5 border border-zinc-900 rounded-xl space-y-4">

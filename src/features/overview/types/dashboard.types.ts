@@ -45,16 +45,12 @@ export interface FollowUpMetrics {
 
 export interface RecentEmergencyCaseItem {
   id: string;
-  sessionId?: string;
-  studentId?: string;
   srqScore: number;
   priorityResult: string;
   calculatedAt: string;
   student?: {
     id: string;
     nim: string;
-    gender?: string;
-    phoneNumber?: string;
     user?: {
       name: string;
       email: string;
@@ -66,7 +62,7 @@ export interface RecentEmergencyCaseItem {
   } | null;
 }
 
-export interface DashboardStats {
+export interface DashboardOverviewResponse {
   masterData: MasterDataMetrics;
   overview: OverviewMetrics;
   facultyDistribution: FacultyRiskDistributionItem[];
@@ -75,3 +71,5 @@ export interface DashboardStats {
   followUpStats: FollowUpMetrics;
   recentEmergencyCases: RecentEmergencyCaseItem[];
 }
+
+export type DashboardStats = DashboardOverviewResponse;
