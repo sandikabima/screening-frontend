@@ -129,7 +129,7 @@ export const transformDetailToReport = (
   // 4. Priority Mapping
   const priorityMap: Record<string, string> = {
     P1: "P1 — EMERGENCY",
-    P2: "P2 — HIGHT RISK",
+    P2: "P2 — HIGH RISK",
     P3: "P3 — MONITORING",
     P4: "P4 — PREVENTIF (NORMAL)",
   };
@@ -177,6 +177,6 @@ export const transformDetailToReport = (
       ruleVersion: data.ruleVersion || "TRIAGE-V1.0",
       calcTimestamp: formatDateTime(data.calculatedAt),
     },
-    psychologistNotes: primaryFollowUp?.notes,
+    psychologistNotes: primaryFollowUp?.notes ?? undefined,
   };
 };
