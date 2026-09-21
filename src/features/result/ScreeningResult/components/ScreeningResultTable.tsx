@@ -21,7 +21,7 @@ const SKELETON_COLUMNS: ColumnSkeletonConfig[] = [
   { width: "w-20" },
   { width: "w-24" },
   { width: "w-28" },
-  { width: "w-32", align: "right", isAction: true },
+  { width: "w-36", align: "right", isAction: true },
 ];
 
 export const ScreeningResultTable: React.FC<ScreeningResultTableProps> = ({
@@ -56,7 +56,7 @@ export const ScreeningResultTable: React.FC<ScreeningResultTableProps> = ({
             <th className="p-4">SKOR SRQ</th>
             <th className="p-4">PRIORITAS TRIAGE</th>
             <th className="p-4">SAFETY FLAG</th>
-            <th className="p-4 text-right">INSPEKSI LOG</th>
+            <th className="p-4 text-right">AKSI</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-900/80 text-xs">
@@ -111,7 +111,7 @@ export const ScreeningResultTable: React.FC<ScreeningResultTableProps> = ({
                       <span className="text-zinc-600 text-[10px]">TIDAK</span>
                     )}
                   </td>
-                  <td className="p-4 text-right whitespace-nowrap">
+                  <td className="p-4 text-right whitespace-nowrap space-x-2">
                     <Button
                       variant="secondary"
                       size="sm"

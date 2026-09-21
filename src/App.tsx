@@ -55,7 +55,7 @@ const UserManagementPage = lazy(
 export const App: React.FC = () => {
   return (
     <>
-      <div className="block lg:hidden fixed inset-0 z-[9999] bg-black text-zinc-400 font-mono text-xs select-none">
+      <div className="block lg:hidden print:hidden fixed inset-0 z-[9999] bg-black text-zinc-400 font-mono text-xs select-none">
         <div className="h-full w-full flex flex-col items-center justify-center p-8 space-y-4 text-center">
           <div className="h-12 w-12 bg-red-950/80 border border-red-700 rounded-lg flex items-center justify-center text-red-500 font-black animate-pulse shadow-[0_0_20px_rgba(220,38,38,0.4)]">
             <ShieldAlert className="h-6 w-6" />

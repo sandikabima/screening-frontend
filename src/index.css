@@ -22,3 +22,42 @@
   scrollbar-width: thin;
   scrollbar-color: #27272a #050505;
 }
+
+/* Sembunyikan elemen laporan dari tampilan monitor biasa */
+@media screen {
+  #print-area {
+    display: none !important;
+  }
+}
+
+/* Aturan Khusus Saat Dialog Cetak / Print Browser Aktif */
+@media print {
+  /* Sembunyikan seluruh isi halaman web */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Munculkan khusus kontainer laporan dummy beserta seluruh anaknya */
+  #print-area,
+  #print-area * {
+    visibility: visible !important;
+  }
+
+  /* Posisikan laporan di pojok kiri atas kertas A4 */
+  #print-area {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+}
