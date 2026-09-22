@@ -27,10 +27,10 @@ export interface StudentInfo {
     id: string;
     name: string;
     code: string;
-    faculty?: Faculty | null; // 👈 1. Ditambahkan di sini agar report.transformer bisa membaca 'faculty'
+    faculty?: Faculty | null;
   };
   cohort?: { id: string; year: number; name: string };
-  class?: StudentClass | null; // 👈 2. Ditambahkan di sini agar report.transformer bisa membaca 'class'
+  class?: StudentClass | null;
 }
 
 export interface FollowUpSummary {

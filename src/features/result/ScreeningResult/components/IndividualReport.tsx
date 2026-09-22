@@ -19,7 +19,7 @@ export const IndividualReport: React.FC<IndividualReportProps> = ({ data }) => {
   const report = transformDetailToReport(data);
 
   return (
-    <div className="report-container font-sans text-[10.5px] text-slate-800 leading-tight">
+    <div className="report-container font-sans text-[9px] text-slate-800 leading-tight">
       {/* Header Banner */}
       <div className="header-banner">
         <div className="header-logo-wrapper">
@@ -137,23 +137,23 @@ export const IndividualReport: React.FC<IndividualReportProps> = ({ data }) => {
               </span>
             ))
           ) : (
-            <span className="text-slate-400 italic text-[8.5px]">
+            <span className="text-slate-400 italic text-[8px]">
               Tidak ada tag masalah utama terpilih
             </span>
           )}
         </div>
       </div>
 
-      {/* 4. Catatan Profesional Psikolog */}
+      {/* 4. Catatan Profesional Psikolog (DIPERBESAR) */}
       <div className="section-block">
         <h3 className="section-title">4. Catatan Profesional Psikolog</h3>
-        <div className="notes-box-styled">
+        <div className="notes-box-styled flex flex-col justify-start">
           {report.psychologistNotes ? (
-            <p className="whitespace-pre-wrap">{report.psychologistNotes}</p>
+            <p className="whitespace-pre-wrap leading-relaxed">
+              {report.psychologistNotes}
+            </p>
           ) : (
-            <span className="notes-placeholder">
-              Ruang observasi dan pertimbangan klinis awal psikolog...
-            </span>
+            <span className="notes-placeholder"></span>
           )}
         </div>
       </div>
@@ -220,16 +220,27 @@ export const IndividualReport: React.FC<IndividualReportProps> = ({ data }) => {
         </table>
       </div>
 
-      {/* Signature Box */}
+      {/* Signature Box (DIPERBESAR LELANG & TINGGI NIK/TANGAN) */}
       <div className="signature-container">
         <div className="sig-box">
-          <div className="sig-header">Diperiksa oleh,</div>
+          <div className="sig-header font-medium">Diperiksa oleh,</div>
           <div className="sig-footer font-bold text-emerald-950">
-            Psikolog UPT LPD
+            <div>(__________________________)</div>
+            <div className="text-[8px] text-slate-500 font-normal mt-0.5">
+              Psikolog UPT LPD
+            </div>
           </div>
         </div>
         <div className="sig-box">
-          <div className="sig-header">Padang, {report.printDate}</div>
+          <div className="sig-header font-medium">
+            Padang, {report.printDate}
+          </div>
+          <div className="sig-footer font-bold text-slate-800">
+            <div>(__________________________)</div>
+            <div className="text-[8px] text-slate-500 font-normal mt-0.5">
+              Petugas Administrasi / Konselor
+            </div>
+          </div>
         </div>
       </div>
 
