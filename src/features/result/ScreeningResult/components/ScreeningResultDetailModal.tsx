@@ -80,7 +80,7 @@ export const ScreeningResultDetailModal: React.FC<
           .tags-container { display: flex; gap: 5px; padding: 4px 6px; border: 1px dashed #cbd5e1; border-radius: 3px; background-color: #fafafa; }
           .tag-chip { background-color: #e2e8f0 !important; color: #334155 !important; padding: 1.5px 6px; border-radius: 8px; font-size: 8px; font-weight: 600; }
           
-          .notes-box-styled { min-height: 120px; border: 1px solid #cbd5e1; border-radius: 3px; padding: 5px 7px; margin-bottom: 3px; background-color: #fafafa; }
+          .notes-box-styled { min-height: 135px; border: 1px solid #cbd5e1; border-radius: 3px; padding: 5px 7px; margin-bottom: 3px; background-color: #fafafa; }
           .notes-placeholder { color: #94a3b8; font-style: italic; font-size: 8.5px; }
           
           .recommendation-list { display: flex; flex-direction: column; gap: 3px; font-size: 9px; margin-top: 3px; }
