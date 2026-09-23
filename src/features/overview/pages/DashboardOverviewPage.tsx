@@ -1,5 +1,4 @@
 import React from "react";
-import * as XLSX from "xlsx";
 import {
   Activity,
   AlertTriangle,
@@ -18,158 +17,10 @@ import {
 import { Button } from "@/shared/components/ui/Button";
 import { useDashboardStats } from "../hooks/useDashboardStats";
 import { HasPermission } from "@/features/auth/components/HasPermission";
-import { DashboardOverviewResponse } from "../types/dashboard.types";
+import { exportDashboardToExcel } from "@/shared/utils/dashboardExcelExporter";
 
 export const DashboardOverviewPage: React.FC = () => {
   const { data, loading, refetchStats } = useDashboardStats();
-
-  const handleExportExcel = (dashboardData: DashboardOverviewResponse) => {
-    const workbook = XLSX.utils.book_new();
-
-    // SHEET 1: RINGKASAN EKSEKUTIF
-    const overviewRows = [
-      ["LAPORAN RINGKASAN DASHBOARD EKSEKUTIF & TRIAGE KLINIS"],
-      [`Tanggal Ekspor: ${new Date().toLocaleDateString("id-ID")}`],
-      [],
-      ["MASTER DATA AKADEMIS", "JUMLAH"],
-      [
-        "Total Mahasiswa Terdaftar",
-        dashboardData.masterData.totalRegisteredStudents,
-      ],
-      ["Total Fakultas", dashboardData.masterData.totalFaculties],
-      ["Total Program Studi", dashboardData.masterData.totalStudyPrograms],
-      ["Total Kelas", dashboardData.masterData.totalClasses],
-      ["Total Angkatan", dashboardData.masterData.totalCohorts],
-      [],
-      ["STATUS TRIAGE KLINIS (SRQ-20)", "JUMLAH KASUS", "PERSENTASE"],
-      [
-        "Total Sesi Screening Selesai",
-        dashboardData.overview.totalScreening,
-        "100%",
-      ],
-      [
-        "P1 - Emergency / Kritis",
-        dashboardData.overview.criticalCasesP1,
-        `${((dashboardData.overview.criticalCasesP1 / (dashboardData.overview.totalScreening || 1)) * 100).toFixed(1)}%`,
-      ],
-      [
-        "P2 - High Risk",
-        dashboardData.overview.highRiskCasesP2,
-        `${((dashboardData.overview.highRiskCasesP2 / (dashboardData.overview.totalScreening || 1)) * 100).toFixed(1)}%`,
-      ],
-      [
-        "P3 - Monitoring",
-        dashboardData.overview.monitoringCasesP3,
-        `${((dashboardData.overview.monitoringCasesP3 / (dashboardData.overview.totalScreening || 1)) * 100).toFixed(1)}%`,
-      ],
-      [
-        "P4 - Preventif / Normal",
-        dashboardData.overview.normalCasesP4,
-        `${((dashboardData.overview.normalCasesP4 / (dashboardData.overview.totalScreening || 1)) * 100).toFixed(1)}%`,
-      ],
-      [],
-      ["INDIKATOR GEJALA UTAMA (INTI)", "JUMLAH KASUS"],
-      [
-        "Dampak Akademik (INTI-01 / F1)",
-        dashboardData.symptomClusters.emotionalDistressF1,
-      ],
-      [
-        "Dampak Aktivitas Sehari-hari (INTI-02 / F2)",
-        dashboardData.symptomClusters.somaticSymptomsF2,
-      ],
-      [
-        "Kemampuan Menghadapi Masalah (INTI-03 / C1)",
-        dashboardData.symptomClusters.depressiveThoughtsC1,
-      ],
-      [
-        "Dukungan Sosial (INTI-04 / S1)",
-        dashboardData.symptomClusters.energyDecreaseS1,
-      ],
-      [],
-      ["TIKET INTERVENSI KLINIS", "JUMLAH TIKET"],
-      ["Belum Ditangani (Pending)", dashboardData.followUpStats.pending],
-      ["Dijadwalkan (Konseling Aktif)", dashboardData.followUpStats.scheduled],
-      ["Selesai (Closed)", dashboardData.followUpStats.completed],
-      ["Total Tiket", dashboardData.followUpStats.totalTickets],
-    ];
-
-    const sheetOverview = XLSX.utils.aoa_to_sheet(overviewRows);
-    XLSX.utils.book_append_sheet(
-      workbook,
-      sheetOverview,
-      "Ringkasan Eksekutif",
-    );
-
-    // SHEET 2: DISTRIBUSI RISIKO FAKULTAS
-    const facultyHeaders = [
-      [
-        "Kode",
-        "Nama Fakultas",
-        "P1 (Emergency)",
-        "P2 (High Risk)",
-        "P3 (Monitoring)",
-        "P4 (Normal)",
-        "Total Screening",
-      ],
-    ];
-    const facultyData = dashboardData.facultyDistribution.map((f) => [
-      f.code,
-      f.name,
-      f.p1,
-      f.p2,
-      f.p3,
-      f.p4,
-      f.total,
-    ]);
-    const sheetFaculty = XLSX.utils.aoa_to_sheet([
-      ...facultyHeaders,
-      ...facultyData,
-    ]);
-    XLSX.utils.book_append_sheet(workbook, sheetFaculty, "Sebaran Fakultas");
-
-    // SHEET 3: PROFIL TAG MASALAH UTAMA (M1)
-    const m1Headers = [["No", "Kategori Masalah Utama (M1)", "Total Kasus"]];
-    const m1Data = dashboardData.mainIssuesM1.map((item, idx) => [
-      idx + 1,
-      item.label,
-      item.total,
-    ]);
-    const sheetM1 = XLSX.utils.aoa_to_sheet([...m1Headers, ...m1Data]);
-    XLSX.utils.book_append_sheet(workbook, sheetM1, "Profil Tag Masalah");
-
-    // SHEET 4: EMERGENCY STREAM P1 TERBARU
-    const emergencyHeaders = [
-      [
-        "NIM",
-        "Nama Mahasiswa",
-        "Program Studi",
-        "Skor SRQ",
-        "Prioritas",
-        "Waktu Kalkulasi",
-      ],
-    ];
-    const emergencyData = dashboardData.recentEmergencyCases.map((c) => [
-      c.student?.nim || "-",
-      c.student?.user?.name || "-",
-      c.student?.studyProgram?.name || "-",
-      c.srqScore,
-      c.priorityResult,
-      new Date(c.calculatedAt).toLocaleString("id-ID"),
-    ]);
-    const sheetEmergency = XLSX.utils.aoa_to_sheet([
-      ...emergencyHeaders,
-      ...emergencyData,
-    ]);
-    XLSX.utils.book_append_sheet(
-      workbook,
-      sheetEmergency,
-      "Emergency Stream P1",
-    );
-
-    // PROSES EKSPOR FILE
-    const filename = `Laporan_Dashboard_Triage_UPT_${new Date().toISOString().split("T")[0]}.xlsx`;
-    XLSX.writeFile(workbook, filename);
-  };
 
   return (
     <div className="w-full space-y-6 font-mono text-zinc-200 select-none">
@@ -178,7 +29,7 @@ export const DashboardOverviewPage: React.FC = () => {
         <div>
           <h1 className="flex items-center gap-3 text-xl font-black uppercase tracking-wider text-white">
             <Activity className="h-6 w-6 text-red-500 animate-pulse" />
-            PANEL KONTROL EKSEKUTIF & TRIAGE KLINIS
+            PANEL KONTROL EKSEKUTIF &amp; TRIAGE KLINIS
           </h1>
           <p className="mt-1 text-xs text-zinc-500">
             Monitoring Real-Time Hasil Diagnostik SRQ-20 &amp; Distribusi
@@ -204,7 +55,7 @@ export const DashboardOverviewPage: React.FC = () => {
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => handleExportExcel(data)}
+              onClick={() => exportDashboardToExcel(data)}
               className="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-400 border border-emerald-800 text-xs font-bold uppercase py-2 px-4 cursor-pointer transition-colors"
             >
               <Download className="h-3.5 w-3.5 mr-2 text-emerald-400" />
@@ -298,7 +149,6 @@ export const DashboardOverviewPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* TOTAL SCREENING */}
             <div className="bg-zinc-950 p-4 border border-zinc-900 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-zinc-500 text-xs font-bold">
                 <span>TOTAL SCREENING</span>
@@ -312,7 +162,6 @@ export const DashboardOverviewPage: React.FC = () => {
               </p>
             </div>
 
-            {/* P1 - EMERGENCY */}
             <div className="bg-red-950/40 p-4 border-2 border-red-500 rounded-xl space-y-2 relative overflow-hidden animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.5)]">
               <div className="absolute top-0 left-0 w-full h-1 bg-red-500 shadow-[0_0_12px_#ef4444]" />
 
@@ -333,7 +182,6 @@ export const DashboardOverviewPage: React.FC = () => {
               </p>
             </div>
 
-            {/* P2 - HIGH RISK */}
             <div className="bg-zinc-950 p-4 border border-amber-900/60 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-amber-500 text-xs font-bold">
                 <span>P2 - HIGH RISK</span>
@@ -347,7 +195,6 @@ export const DashboardOverviewPage: React.FC = () => {
               </p>
             </div>
 
-            {/* P3 - MONITORING */}
             <div className="bg-zinc-950 p-4 border border-blue-900/60 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-blue-400 text-xs font-bold">
                 <span>P3 - MONITORING</span>
@@ -361,7 +208,6 @@ export const DashboardOverviewPage: React.FC = () => {
               </p>
             </div>
 
-            {/* P4 - PREVENTIF */}
             <div className="bg-zinc-950 p-4 border border-emerald-900/60 rounded-xl space-y-2 relative overflow-hidden">
               <div className="flex items-center justify-between text-emerald-500 text-xs font-bold">
                 <span>P4 - PREVENTIF</span>
@@ -448,7 +294,6 @@ export const DashboardOverviewPage: React.FC = () => {
             })}
           </div>
 
-          {/* Legend Warna */}
           <div className="flex items-center gap-4 text-[10px] pt-2 text-zinc-500 border-t border-zinc-900">
             <span className="flex items-center gap-1">
               <span className="h-2 w-2 rounded-full bg-red-600" /> P1 Emergency
@@ -468,7 +313,7 @@ export const DashboardOverviewPage: React.FC = () => {
         </div>
       </HasPermission>
 
-      {/* 5. SEBARAN KELOMPOK GEJALA INTI & PROFIL TAG M1 */}
+      {/* 5. SEBARAN KELOMPOK GEJALA INTI &amp; PROFIL TAG M1 */}
       <HasPermission permission="view_clinical_triage_stats">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-black p-5 border border-zinc-900 rounded-xl space-y-4">
@@ -568,7 +413,7 @@ export const DashboardOverviewPage: React.FC = () => {
         </div>
       </HasPermission>
 
-      {/* 6. STATUS TIKET & EMERGENCY STREAM */}
+      {/* 6. STATUS TIKET &amp; EMERGENCY STREAM */}
       <HasPermission permission="view_clinical_triage_stats_super_admin">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-black p-5 border border-zinc-900 rounded-xl space-y-4">
