@@ -495,7 +495,8 @@ export const DashboardOverviewPage: React.FC = () => {
               </span>
             </h3>
 
-            <div className="space-y-3">
+            {/* DITAMBAHKAN max-h DAN overflow-y-auto AGAR BISA DI-SCROLL */}
+            <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1.5 custom-scrollbar">
               {data?.recentEmergencyCases?.map((c) => (
                 <div
                   key={c.id}
