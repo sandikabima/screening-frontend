@@ -51,6 +51,7 @@ export interface RecentEmergencyCaseItem {
   student?: {
     id: string;
     nim: string;
+    phoneNumber?: string | null;
     user?: {
       name: string;
       email: string;

@@ -457,6 +457,7 @@ export const exportDashboardToExcel = async (
   header4.values = [
     "NIM",
     "NAMA MAHASISWA",
+    "NO. WHATSAPP / HP",
     "PROGRAM STUDI",
     "SKOR SRQ",
     "PRIORITAS",
@@ -469,6 +470,7 @@ export const exportDashboardToExcel = async (
     const row = sheet4.addRow([
       c.student?.nim || "-",
       c.student?.user?.name || "-",
+      c.student?.phoneNumber || "-",
       c.student?.studyProgram?.name || "-",
       c.srqScore,
       c.priorityResult,
@@ -485,9 +487,11 @@ export const exportDashboardToExcel = async (
     applyDataStyle(row.getCell(1), idx % 2 === 1, "center", true);
     applyDataStyle(row.getCell(2), idx % 2 === 1, "left");
     applyDataStyle(row.getCell(3), idx % 2 === 1, "left");
-    applyDataStyle(row.getCell(4), idx % 2 === 1, "center", true);
-    applyBadgeStyle(row.getCell(5), "P1");
+    applyDataStyle(row.getCell(4), idx % 2 === 1, "left");
+    applyDataStyle(row.getCell(5), idx % 2 === 1, "center");
     applyDataStyle(row.getCell(6), idx % 2 === 1, "center");
+    applyBadgeStyle(row.getCell(6), "P1");
+    applyDataStyle(row.getCell(7), idx % 2 === 1, "center");
   });
 
   autoFitColumns(sheet4, 16);
