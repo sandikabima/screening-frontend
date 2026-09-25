@@ -11,14 +11,33 @@ import { screeningResultService } from "../api/screeningResult.service";
 
 const MIN_TABLE_LOADING = 600;
 
+export interface FilterParams {
+  search?: string;
+  priorityFilter?: PriorityResult | "";
+  facultyId?: string;
+  studyProgramId?: string;
+  cohortId?: string;
+  classId?: string;
+  gender?: "L" | "P" | "";
+}
+
 export const useScreeningResults = (isTabActive: boolean = false) => {
   const { notify } = useNotificationStore();
   const [search, setSearch] = useState<string>("");
   const [priorityFilter, setPriorityFilter] = useState<PriorityResult | "">("");
+
+  // State Filter Tambahan
+  const [facultyFilter, setFacultyFilter] = useState<string>("");
+  const [studyProgramFilter, setStudyProgramFilter] = useState<string>("");
+  const [cohortFilter, setCohortFilter] = useState<string>("");
+  const [classFilter, setClassFilter] = useState<string>("");
+  const [genderFilter, setGenderFilter] = useState<"L" | "P" | "">("");
+
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
 
-  const cacheKey = `screening_res_p${page}_l${limit}_pr${priorityFilter}_s${search}`;
+  // Cache Key Unik Berdasarkan Seluruh Kombinasi Filter
+  const cacheKey = `screening_res_p${page}_l${limit}_pr${priorityFilter}_s${search}_f${facultyFilter}_sp${studyProgramFilter}_ch${cohortFilter}_cl${classFilter}_g${genderFilter}`;
   const cached = rbacCache.get<{
     results: ScreeningResult[];
     pagination: Pagination;
@@ -45,12 +64,17 @@ export const useScreeningResults = (isTabActive: boolean = false) => {
       targetLimit = limit,
       targetPriority = priorityFilter,
       targetSearch = search,
+      targetFaculty = facultyFilter,
+      targetStudyProgram = studyProgramFilter,
+      targetCohort = cohortFilter,
+      targetClass = classFilter,
+      targetGender = genderFilter,
       force = false,
     ) => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
       abortControllerRef.current = new AbortController();
 
-      const currentKey = `screening_res_p${targetPage}_l${targetLimit}_pr${targetPriority}_s${targetSearch}`;
+      const currentKey = `screening_res_p${targetPage}_l${targetLimit}_pr${targetPriority}_s${targetSearch}_f${targetFaculty}_sp${targetStudyProgram}_ch${targetCohort}_cl${targetClass}_g${targetGender}`;
       const currentCached = rbacCache.get<{
         results: ScreeningResult[];
         pagination: Pagination;
@@ -74,8 +98,13 @@ export const useScreeningResults = (isTabActive: boolean = false) => {
             {
               page: targetPage,
               limit: targetLimit,
-              priorityResult: targetPriority,
-              search: targetSearch,
+              priorityResult: targetPriority || undefined,
+              search: targetSearch || undefined,
+              facultyId: targetFaculty || undefined,
+              studyProgramId: targetStudyProgram || undefined,
+              cohortId: targetCohort || undefined,
+              classId: targetClass || undefined,
+              gender: targetGender || undefined,
             },
             abortControllerRef.current.signal,
           ),
@@ -103,12 +132,22 @@ export const useScreeningResults = (isTabActive: boolean = false) => {
         setLoading(false);
       }
     },
-    [page, limit, priorityFilter, search, notify],
+    [
+      page,
+      limit,
+      priorityFilter,
+      search,
+      facultyFilter,
+      studyProgramFilter,
+      cohortFilter,
+      classFilter,
+      genderFilter,
+      notify,
+    ],
   );
 
   useEffect(() => {
     if (isTabActive) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       fetchResults();
     }
     return () => {
@@ -139,6 +178,88 @@ export const useScreeningResults = (isTabActive: boolean = false) => {
     }
   };
 
+  // 🟢 FUNGSI KHUSUS EKSPOR: Mengambil SELURUH DATA dari server tanpa terpotong pagination
+  const fetchAllResultsForExport = async (overrideFilters?: FilterParams) => {
+    try {
+      const activeSearch =
+        overrideFilters?.search !== undefined ? overrideFilters.search : search;
+      const activePriority =
+        overrideFilters?.priorityFilter !== undefined
+          ? overrideFilters.priorityFilter
+          : priorityFilter;
+      const activeFaculty =
+        overrideFilters?.facultyId !== undefined
+          ? overrideFilters.facultyId
+          : facultyFilter;
+      const activeStudyProgram =
+        overrideFilters?.studyProgramId !== undefined
+          ? overrideFilters.studyProgramId
+          : studyProgramFilter;
+      const activeCohort =
+        overrideFilters?.cohortId !== undefined
+          ? overrideFilters.cohortId
+          : cohortFilter;
+      const activeClass =
+        overrideFilters?.classId !== undefined
+          ? overrideFilters.classId
+          : classFilter;
+      const activeGender =
+        overrideFilters?.gender !== undefined
+          ? overrideFilters.gender
+          : genderFilter;
+
+      // 1. Tembak API ringan (limit 1) untuk mendapatkan info TOTAL record aktual dari server
+      const checkTotalResponse = await screeningResultService.getResults({
+        page: 1,
+        limit: 1,
+        priorityResult: activePriority || undefined,
+        search: activeSearch || undefined,
+        facultyId: activeFaculty || undefined,
+        studyProgramId: activeStudyProgram || undefined,
+        cohortId: activeCohort || undefined,
+        classId: activeClass || undefined,
+        gender: activeGender || undefined,
+      });
+
+      const totalActualRecords =
+        checkTotalResponse.meta?.pagination?.total || 9999;
+
+      // 2. Tembak API utama dengan limit sama dengan total data
+      const fullResponse = await screeningResultService.getResults({
+        page: 1,
+        limit: totalActualRecords > 0 ? totalActualRecords : 9999,
+        priorityResult: activePriority || undefined,
+        search: activeSearch || undefined,
+        facultyId: activeFaculty || undefined,
+        studyProgramId: activeStudyProgram || undefined,
+        cohortId: activeCohort || undefined,
+        classId: activeClass || undefined,
+        gender: activeGender || undefined,
+      });
+
+      const list =
+        fullResponse.data?.results ||
+        (Array.isArray(fullResponse.data) ? fullResponse.data : []);
+
+      return list;
+    } catch (err: any) {
+      throw err;
+    }
+  };
+
+  const applyFilters = (filters: FilterParams) => {
+    if (filters.search !== undefined) setSearch(filters.search);
+    if (filters.priorityFilter !== undefined)
+      setPriorityFilter(filters.priorityFilter);
+    if (filters.facultyId !== undefined) setFacultyFilter(filters.facultyId);
+    if (filters.studyProgramId !== undefined)
+      setStudyProgramFilter(filters.studyProgramId);
+    if (filters.cohortId !== undefined) setCohortFilter(filters.cohortId);
+    if (filters.classId !== undefined) setClassFilter(filters.classId);
+    if (filters.gender !== undefined) setGenderFilter(filters.gender);
+    setPage(1);
+  };
+
   return {
     results,
     loading,
@@ -146,6 +267,11 @@ export const useScreeningResults = (isTabActive: boolean = false) => {
     loadingDetail,
     search,
     priorityFilter,
+    facultyFilter,
+    studyProgramFilter,
+    cohortFilter,
+    classFilter,
+    genderFilter,
     pagination,
     setSearch: (val: string) => {
       setSearch(val);
@@ -155,14 +281,32 @@ export const useScreeningResults = (isTabActive: boolean = false) => {
       setPriorityFilter(val);
       setPage(1);
     },
+    setFacultyFilter,
+    setStudyProgramFilter,
+    setCohortFilter,
+    setClassFilter,
+    setGenderFilter,
+    applyFilters,
     setPage,
     setLimit: (val: number) => {
       setLimit(val);
       setPage(1);
     },
     refetchResults: () =>
-      fetchResults(page, limit, priorityFilter, search, true),
+      fetchResults(
+        page,
+        limit,
+        priorityFilter,
+        search,
+        facultyFilter,
+        studyProgramFilter,
+        cohortFilter,
+        classFilter,
+        genderFilter,
+        true,
+      ),
     fetchResultDetail,
+    fetchAllResultsForExport, // 🟢 Export fungsi baru
     clearDetail: () => setDetailData(null),
   };
 };
